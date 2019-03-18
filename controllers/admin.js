@@ -1,4 +1,4 @@
-const Product = require("../models/product")
+const productDB = require("../data/products/products_db")
 
 exports.getAddProduct = (req, res, next) => {
   res.render("admin/edit-product", {
@@ -9,13 +9,8 @@ exports.getAddProduct = (req, res, next) => {
 }
 
 exports.postAddProduct = (req, res, next) => {
-  const title = req.body.title
-  const imageUrl = req.body.imageUrl
-  const price = req.body.price
-  const description = req.body.description
-  const product = new Product(null, title, imageUrl, description, price)
-  product
-    .save()
+  productDB
+    .save(req.body)
     .then(response => {
       res.redirect("/")
     })
@@ -57,7 +52,8 @@ exports.postEditProduct = (req, res, next) => {
 }
 
 exports.getProducts = (req, res, next) => {
-  Product.fetchAll()
+  productDB
+    .fetchAll()
     .then(products => {
       res.render("admin/products", {
         prods: products,

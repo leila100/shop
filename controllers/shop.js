@@ -1,8 +1,8 @@
-const Product = require("../models/product")
+const ProductDB = require("../data/products/products_db")
 const Cart = require("../models/cart")
 
 exports.getProducts = (req, res, next) => {
-  Product.fetchAll()
+  ProductDB.fetchAll()
     .then(products => {
       res.render("shop/product-list", {
         prods: products,
@@ -15,7 +15,7 @@ exports.getProducts = (req, res, next) => {
 
 exports.getProduct = (req, res, next) => {
   const prodId = req.params.productId
-  Product.findById(prodId)
+  ProductDB.findById(prodId)
     .then(product => {
       res.render("shop/product-detail", {
         path: "/products",
@@ -27,7 +27,7 @@ exports.getProduct = (req, res, next) => {
 }
 
 exports.getIndex = (req, res, next) => {
-  Product.fetchAll()
+  ProductDB.fetchAll()
     .then(products => {
       res.render("shop/index", {
         prods: products,
