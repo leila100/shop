@@ -27,6 +27,11 @@ function findById(id) {
     .first()
 }
 
-function deleteById(id) {}
+function deleteById(id, product) {}
 
-function updateById(id) {}
+function updateById(id, product) {
+  const { title, imageUrl, price, description } = product
+  return db("products")
+    .where({ id: Number(id) })
+    .update({ title, imageUrl, price, description })
+}
