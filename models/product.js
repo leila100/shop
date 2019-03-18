@@ -11,7 +11,9 @@ module.exports = class Product {
     this.price = price
   }
 
-  save() {}
+  save() {
+    return db("products").insert(this)
+  }
 
   static fetchAll() {
     return db("products")
