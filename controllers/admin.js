@@ -17,10 +17,9 @@ exports.postAddProduct = (req, res, next) => {
   product
     .save()
     .then(response => {
-      console.log(response)
+      res.redirect("/")
     })
     .catch(err => console.log(err))
-  res.redirect("/")
 }
 
 exports.getEditProduct = (req, res, next) => {

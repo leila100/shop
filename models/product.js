@@ -19,7 +19,11 @@ module.exports = class Product {
     return db("products")
   }
 
-  static findById(id, cb) {}
+  static findById(id) {
+    return db("products")
+      .where({ id: Number(id) })
+      .first()
+  }
 
   static deleteById(id) {}
 }
