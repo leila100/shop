@@ -11,30 +11,29 @@ module.exports = {
   deleteById
 }
 
-function save(product) {
-  return db("products").insert(product)
+function save(user) {
+  return db("users").insert(user)
 }
 
-function fetchAll(userId) {
-  if (userId) return db("products").where({ user_id: Number(userId) })
-  else return db("products")
+function fetchAll() {
+  return db("users")
 }
 
 function findById(id) {
-  return db("products")
+  return db("users")
     .where({ id: Number(id) })
     .first()
 }
 
 function deleteById(id) {
-  return db("products")
+  return db("users")
     .where({ id: Number(id) })
     .del()
 }
 
-function updateById(id, product) {
-  const { title, imageUrl, price, description } = product
-  return db("products")
+function updateById(id, user) {
+  const { title, imageUrl, price, description } = user
+  return db("users")
     .where({ id: Number(id) })
     .update({ title, imageUrl, price, description })
 }

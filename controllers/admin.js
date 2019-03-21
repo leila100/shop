@@ -9,10 +9,12 @@ exports.getAddProduct = (req, res, next) => {
 }
 
 exports.postAddProduct = (req, res, next) => {
+  const productInfo = req.body
+  productInfo.user_id = req.user.id
   productDB
     .save(req.body)
     .then(response => {
-      res.redirect("/")
+      res.redirect("/admin/products")
     })
     .catch(err => console.log(err))
 }
@@ -49,7 +51,7 @@ exports.postEditProduct = (req, res, next) => {
 
 exports.getProducts = (req, res, next) => {
   productDB
-    .fetchAll()
+    .fetchAll(req.user.id)
     .then(products => {
       res.render("admin/products", {
         prods: products,

@@ -5,10 +5,25 @@ const bodyParser = require("body-parser")
 
 const errorController = require("./controllers/error")
 
+const userDb = require("./data/users/users_db")
+
 const app = express()
 
 app.set("view engine", "ejs")
 app.set("views", "views")
+
+app.use((req, res, next) => {
+  // Used to save the current user in req
+  userDb
+    .findById(1)
+    .then(user => {
+      req.user = user
+      next()
+    })
+    .catch(err => {
+      console.log(err)
+    })
+})
 
 const adminRoutes = require("./routes/admin")
 const shopRoutes = require("./routes/shop")
