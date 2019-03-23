@@ -8,11 +8,14 @@ module.exports = {
   getCart,
   getProducts,
   addProduct,
-  updateProduct
+  updateProduct,
+  updateTotalPrice
 }
 
 function save(id) {
-  return db("carts").insert(id)
+  return db("carts")
+    .insert(id)
+    .then(ids => ({ id: ids[0] }))
 }
 
 function getCart(id) {
@@ -39,4 +42,10 @@ function updateProduct(prodId, cartId, qty) {
   return db("cartItems")
     .update({ quantity: qty, product_id: prodId, cart_id: cartId })
     .where({ cart_id: cartId, product_id: prodId })
+}
+
+function updateTotalPrice(price, cartId) {
+  return db("carts")
+    .update({ user_id: cartId, total_price: price })
+    .where({ id: Number(cartId) })
 }

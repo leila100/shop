@@ -51,7 +51,8 @@ exports.getCart = (req, res, next) => {
           res.render("shop/cart", {
             path: "/cart",
             pageTitle: "Your Cart",
-            products: products
+            products: products,
+            total: cart.total_price
           })
         })
         .catch(err => console.log(err))
@@ -73,14 +74,29 @@ exports.postCart = (req, res, next) => {
             //if yes, update quantity
             cartDB
               .updateProduct(prodId, cart.id, product.quantity + 1)
-              .then(count => res.redirect("/cart"))
+              .then(count => {
+                //Update the cart total price
+                const total = cart.total_price + product.price
+                cartDB
+                  .updateTotalPrice(total, cart.id)
+                  .then(count => res.redirect("/cart"))
+                  .catch(err => console.log(err))
+              })
               .catch(err => console.log(err))
           } else {
             // If no, add product to cart
             productDB.findById(prodId).then(p => {
               cartDB
                 .addProduct(prodId, cart.id)
-                .then(count => res.redirect("/cart"))
+                .then(count => {
+                  productDB.findById(prodId).then(prod => {
+                    const total = cart.total_price + prod.price
+                    cartDB
+                      .updateTotalPrice(total, cart.id)
+                      .then(count => res.redirect("/cart"))
+                      .catch(err => console.log(err))
+                  })
+                })
                 .catch(err => console.log(err))
             })
           }
