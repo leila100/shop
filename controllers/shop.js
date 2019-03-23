@@ -65,53 +65,67 @@ exports.postCart = (req, res, next) => {
   cartDB
     .getCart(req.user.id)
     .then(cart => {
-      cartDB
-        .getProducts(cart.id)
-        .then(products => {
-          const product = products.find(p => p.id === Number(prodId))
-          // Check if product already in cart,
-          if (product) {
-            //if yes, update quantity
-            cartDB
-              .updateProduct(prodId, cart.id, product.quantity + 1)
-              .then(count => {
-                //Update the cart total price
-                const total = cart.total_price + product.price
+      cartDB.getProducts(cart.id).then(products => {
+        const product = products.find(p => p.id === Number(prodId))
+        // Check if product already in cart,
+        if (product) {
+          //if yes, update quantity
+          cartDB
+            .updateProduct(prodId, cart.id, product.quantity + 1)
+            .then(count => {
+              //Update the cart total price
+              const total = cart.total_price + product.price
+              cartDB
+                .updateTotalPrice(total, cart.id)
+                .then(count => res.redirect("/cart"))
+                .catch(err => console.log(err))
+            })
+        } else {
+          // If no, add product to cart
+          productDB.findById(prodId).then(p => {
+            cartDB.addProduct(prodId, cart.id).then(count => {
+              productDB.findById(prodId).then(prod => {
+                const total = cart.total_price + prod.price
                 cartDB
                   .updateTotalPrice(total, cart.id)
                   .then(count => res.redirect("/cart"))
-                  .catch(err => console.log(err))
               })
-              .catch(err => console.log(err))
-          } else {
-            // If no, add product to cart
-            productDB.findById(prodId).then(p => {
-              cartDB
-                .addProduct(prodId, cart.id)
-                .then(count => {
-                  productDB.findById(prodId).then(prod => {
-                    const total = cart.total_price + prod.price
-                    cartDB
-                      .updateTotalPrice(total, cart.id)
-                      .then(count => res.redirect("/cart"))
-                      .catch(err => console.log(err))
-                  })
-                })
-                .catch(err => console.log(err))
             })
-          }
-        })
-        .catch(err => console.log(err))
+          })
+        }
+      })
     })
     .catch(err => console.log(err))
 }
 
 exports.postCartDeleteProduct = (req, res, next) => {
   const prodId = req.params.productId
-  Product.findById(prodId, product => {
-    Cart.deleteProduct(prodId, product.price)
-    res.redirect("/cart")
-  })
+  cartDB
+    .getCart(req.user.id)
+    .then(cart => {
+      cartDB.getProducts(cart.id).then(products => {
+        const product = products.find(p => p.id === Number(prodId))
+        // Check if product already in cart,
+        if (product) {
+          if (product.quantity === 1) {
+            cartDB.removeProduct(cart.id, prodId).then(count => {
+              console.log(count)
+            })
+          } else {
+            cartDB
+              .updateProduct(prodId, cart.id, product.quantity - 1)
+              .then(count => {
+                console.log(count)
+              })
+          }
+          const total = cart.total_price - product.price
+          cartDB
+            .updateTotalPrice(total, cart.id)
+            .then(count => res.redirect("/cart"))
+        } else res.redirect("/cart")
+      })
+    })
+    .catch(err => console.log(err))
 }
 
 exports.getOrders = (req, res, next) => {

@@ -9,7 +9,8 @@ module.exports = {
   getProducts,
   addProduct,
   updateProduct,
-  updateTotalPrice
+  updateTotalPrice,
+  removeProduct
 }
 
 function save(id) {
@@ -48,4 +49,10 @@ function updateTotalPrice(price, cartId) {
   return db("carts")
     .update({ user_id: cartId, total_price: price })
     .where({ id: Number(cartId) })
+}
+
+function removeProduct(cartId, prodId) {
+  return db("cartItems")
+    .where({ cart_id: cartId, product_id: prodId })
+    .del()
 }
