@@ -65,8 +65,7 @@ exports.postCart = (req, res, next) => {
   cartDB
     .getCart(req.user.id)
     .then(cart => {
-      cartDB.getProducts(cart.id).then(products => {
-        const product = products.find(p => p.id === Number(prodId))
+      cartDB.getProduct(cart.id, prodId).then(product => {
         // Check if product already in cart,
         if (product) {
           //if yes, update quantity
@@ -103,8 +102,7 @@ exports.postCartDeleteProduct = (req, res, next) => {
   cartDB
     .getCart(req.user.id)
     .then(cart => {
-      cartDB.getProducts(cart.id).then(products => {
-        const product = products.find(p => p.id === Number(prodId))
+      cartDB.getProduct(cart.id, prodId).then(product => {
         // Check if product already in cart,
         if (product) {
           if (product.quantity === 1) {

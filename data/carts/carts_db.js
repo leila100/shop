@@ -10,7 +10,8 @@ module.exports = {
   addProduct,
   updateProduct,
   updateTotalPrice,
-  removeProduct
+  removeProduct,
+  getProduct
 }
 
 function save(id) {
@@ -31,6 +32,13 @@ function getProducts(cart_id) {
     .from("products")
     .innerJoin("cartItems", "products.id", "cartItems.product_id")
     .where({ "cartItems.cart_id": Number(cart_id) })
+}
+
+function getProduct(cartId, prodId) {
+  return db("products")
+    .innerJoin("cartItems", "products.id", "cartItems.product_id")
+    .where({ "cartItems.cart_id": cartId, "products.id": prodId })
+    .first()
 }
 
 function addProduct(product_id, cart_id) {
