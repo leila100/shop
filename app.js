@@ -17,7 +17,7 @@ app.set("views", "views")
 app.use((req, res, next) => {
   // Used to save the current user in req
   userDb
-    .findById(1)
+    .findById(2)
     .then(user => {
       req.user = user
       // if user has no cart, create it
