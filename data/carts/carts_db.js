@@ -11,7 +11,9 @@ module.exports = {
   updateProduct,
   updateTotalPrice,
   removeProduct,
-  getProduct
+  getProduct,
+  emptyCart,
+  resetTotal
 }
 
 function save(id) {
@@ -63,4 +65,16 @@ function removeProduct(cartId, prodId) {
   return db("cartItems")
     .where({ cart_id: cartId, product_id: prodId })
     .del()
+}
+
+function emptyCart(cartId) {
+  return db("CartItems")
+    .where({ cart_id: cartId })
+    .del()
+}
+
+function resetTotal(cartId, userId) {
+  return db("carts")
+    .update({ total_price: 0 })
+    .where({ id: Number(cartId) })
 }

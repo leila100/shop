@@ -22,3 +22,9 @@
   margin: 0;
 }
 
+.total {
+  text-align: center;
+  margin: 20px 0;
+  font-size: 20px;
+  color: #00695c;
+}

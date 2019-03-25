@@ -1,0 +1,21 @@
+<%- include('../includes/head.ejs') %>
+    </head>
+
+    <body>
+        <%- include('../includes/navigation.ejs') %>
+        <main>
+          <% if (products.length === 0) { %>
+            <h1>Nothing there!</h1>
+          <% } else { %>
+              <% products.forEach(product => { %>
+                <ul>
+                  <li>Product: <%= product.title %></li>
+                  <li>Description: <%= product.description %></li>
+                  <li>Quantity: <%= product.quantity %></li>
+                  <li>Price: <%= product.price %></li>
+                </ul>
+              <% }) %>
+            <p>Total Price: <%= total %></p>
+          <% } %>
+        </main>
+        <%- include('../includes/end.ejs') %>

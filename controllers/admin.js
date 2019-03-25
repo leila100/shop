@@ -53,6 +53,7 @@ exports.getProducts = (req, res, next) => {
   productDB
     .fetchAll(req.user.id)
     .then(products => {
+      console.log("products: ", products, req.user.id)
       res.render("admin/products", {
         prods: products,
         pageTitle: "Admin Products",

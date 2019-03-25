@@ -1,5 +1,6 @@
 const productDB = require("../data/products/products_db")
 const cartDB = require("../data/carts/carts_db")
+const orderDB = require("../data/orders/orders_db")
 
 exports.getProducts = (req, res, next) => {
   productDB
@@ -122,6 +123,50 @@ exports.postCartDeleteProduct = (req, res, next) => {
             .then(count => res.redirect("/cart"))
         } else res.redirect("/cart")
       })
+    })
+    .catch(err => console.log(err))
+}
+
+exports.postOrder = (req, res, next) => {
+  cartDB
+    .getCart(req.user.id)
+    .then(cart => {
+      orderDB.createOrder(req.user.id, cart.total_price).then(orderId => {
+        cartDB.getProducts(cart.id).then(products => {
+          products.forEach(prod => {
+            orderDB
+              .saveOrderItem(prod.id, orderId.id, prod.quantity)
+              .then(orderItemId => console.log("orderItem: ", orderItemId))
+          })
+          //Clear cart and redirect to /order
+          cartDB.emptyCart(cart.id).then(count =>
+            cartDB.resetTotal(cart.id).then(id => {
+              res.render("shop/order", {
+                path: `/order/${orderId.id}`,
+                pageTitle: "Your Order",
+                products: products,
+                total: cart.total_price
+              })
+            })
+          )
+        })
+      })
+    })
+    .catch(err => console.log(err))
+}
+
+exports.getOrder = (req, res, next) => {
+  orderDB
+    .getProducts(req.params.id)
+    .then(products => {
+      if (products.length > 0) {
+        res.render("shop/order", {
+          path: `/order/${req.params.id}`,
+          pageTitle: "Your Order",
+          products: products,
+          total: products[0].Total
+        })
+      } else res.redirect("/orders")
     })
     .catch(err => console.log(err))
 }
