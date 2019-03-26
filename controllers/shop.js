@@ -172,9 +172,22 @@ exports.getOrder = (req, res, next) => {
 }
 
 exports.getOrders = (req, res, next) => {
-  res.render("shop/orders", {
-    path: "/orders",
-    pageTitle: "Your Orders"
+  orderDB.getOrders(req.user.id).then(result => {
+    orderDB.getOrderIds(req.user.id).then(ids => {
+      const orders = []
+      ids.forEach(orderId => {
+        const order = { orderId: orderId.id, products: [] }
+        const products = result.filter(res => res.orderId === orderId.id)
+        order.products = products
+        orders.push(order)
+      })
+      console.log(orders)
+      res.render("shop/orders", {
+        path: "/orders",
+        pageTitle: "Your Orders",
+        orders: orders
+      })
+    })
   })
 }
 
