@@ -5,6 +5,7 @@ const bodyParser = require("body-parser")
 
 const mongoConnect = require("./util/database").mongoConnect
 const errorController = require("./controllers/error")
+const User = require("./models/user")
 
 const app = express()
 
@@ -14,26 +15,14 @@ app.set("views", "views")
 // Middleware to create a user and its corresponding cart
 app.use((req, res, next) => {
   // Used to save the current user in req
-  // userDb
-  //   .findById(2)
-  //   .then(user => {
-  //     req.user = user
-  //     // if user has no cart, create it
-  //     cartDb.getCart(user.id).then(cart => {
-  //       if (!cart) {
-  //         cartDb
-  //           .save({ user_id: user.id }) //creating cart for current user
-  //           .then(response => {
-  //             console.log("Creating a cart for user")
-  //           })
-  //       }
-  //       next()
-  //     })
-  //   })
-  //   .catch(err => {
-  //     console.log(err)
-  //   })
-  next()
+  User.findById("5c9d51e809fe2206b492a2d4")
+    .then(user => {
+      req.user = user
+      next()
+    })
+    .catch(err => {
+      console.log(err)
+    })
 })
 
 const adminRoutes = require("./routes/admin")
