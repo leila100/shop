@@ -12,19 +12,18 @@ exports.getProducts = (req, res, next) => {
     .catch(err => console.log(err))
 }
 
-// exports.getProduct = (req, res, next) => {
-//   const prodId = req.params.productId
-//   productDB
-//     .findById(prodId)
-//     .then(product => {
-//       res.render("shop/product-detail", {
-//         path: "/products",
-//         pageTitle: product.title,
-//         product: product
-//       })
-//     })
-//     .catch(err => console.log(err))
-// }
+exports.getProduct = (req, res, next) => {
+  const prodId = req.params.productId
+  Product.findById(prodId)
+    .then(product => {
+      res.render("shop/product-detail", {
+        path: "/products",
+        pageTitle: product.title,
+        product: product
+      })
+    })
+    .catch(err => console.log(err))
+}
 
 exports.getIndex = (req, res, next) => {
   Product.fetchAll()
