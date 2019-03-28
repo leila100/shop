@@ -1,4 +1,3 @@
-const productDB = require("../data/products/products_db")
 const Product = require("../models/product")
 
 exports.getAddProduct = (req, res, next) => {
@@ -41,7 +40,10 @@ exports.getEditProduct = (req, res, next) => {
 
 exports.postEditProduct = (req, res, next) => {
   const prodId = req.params.productId
-  Product.updateById(prodId, req.body)
+  const { title, imageUrl, price, description } = req.body
+  const product = new Product(title, price, description, imageUrl, prodId)
+  product
+    .save()
     .then(response => {
       res.redirect("/admin/products")
     })
@@ -60,12 +62,12 @@ exports.getProducts = (req, res, next) => {
     .catch(err => console.log(err))
 }
 
-exports.postDeleteProduct = (req, res, next) => {
-  //   const prodId = req.params.productId
-  //   productDB
-  //     .deleteById(prodId)
-  //     .then(response => {
-  //       res.redirect("/admin/products")
-  //     })
-  //     .catch(err => console.log(err))
-}
+// exports.postDeleteProduct = (req, res, next) => {
+//   const prodId = req.params.productId
+//   productDB
+//     .deleteById(prodId)
+//     .then(response => {
+//       res.redirect("/admin/products")
+//     })
+//     .catch(err => console.log(err))
+// }
