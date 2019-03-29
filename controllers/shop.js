@@ -56,42 +56,51 @@ exports.getIndex = (req, res, next) => {
 //     .catch(err => console.log(err))
 // }
 
-// exports.postCart = (req, res, next) => {
-//   const prodId = req.body.productId
-//   cartDB
-//     .getCart(req.user.id)
-//     .then(cart => {
-//       cartDB.getProduct(cart.id, prodId).then(product => {
-//         // Check if product already in cart,
-//         if (product) {
-//           //if yes, update quantity
-//           cartDB
-//             .updateProduct(prodId, cart.id, product.quantity + 1)
-//             .then(count => {
-//               //Update the cart total price
-//               const total = cart.total_price + product.price
-//               cartDB
-//                 .updateTotalPrice(total, cart.id)
-//                 .then(count => res.redirect("/cart"))
-//                 .catch(err => console.log(err))
-//             })
-//         } else {
-//           // If no, add product to cart
-//           productDB.findById(prodId).then(p => {
-//             cartDB.addProduct(prodId, cart.id).then(count => {
-//               productDB.findById(prodId).then(prod => {
-//                 const total = cart.total_price + prod.price
-//                 cartDB
-//                   .updateTotalPrice(total, cart.id)
-//                   .then(count => res.redirect("/cart"))
-//               })
-//             })
-//           })
-//         }
-//       })
-//     })
-//     .catch(err => console.log(err))
-// }
+exports.postCart = (req, res, next) => {
+  const prodId = req.body.productId
+  Product.findById(prodId)
+    .then(product => {
+      return req.user.addToCart(product)
+    })
+    .then(result => {
+      // console.log(result)
+      res.redirect("/")
+    })
+    .catch(err => console.log(err))
+  //   cartDB
+  //     .getCart(req.user.id)
+  //     .then(cart => {
+  //       cartDB.getProduct(cart.id, prodId).then(product => {
+  //         // Check if product already in cart,
+  //         if (product) {
+  //           //if yes, update quantity
+  //           cartDB
+  //             .updateProduct(prodId, cart.id, product.quantity + 1)
+  //             .then(count => {
+  //               //Update the cart total price
+  //               const total = cart.total_price + product.price
+  //               cartDB
+  //                 .updateTotalPrice(total, cart.id)
+  //                 .then(count => res.redirect("/cart"))
+  //                 .catch(err => console.log(err))
+  //             })
+  //         } else {
+  //           // If no, add product to cart
+  //           productDB.findById(prodId).then(p => {
+  //             cartDB.addProduct(prodId, cart.id).then(count => {
+  //               productDB.findById(prodId).then(prod => {
+  //                 const total = cart.total_price + prod.price
+  //                 cartDB
+  //                   .updateTotalPrice(total, cart.id)
+  //                   .then(count => res.redirect("/cart"))
+  //               })
+  //             })
+  //           })
+  //         }
+  //       })
+  //     })
+  //     .catch(err => console.log(err))
+}
 
 // exports.postCartDeleteProduct = (req, res, next) => {
 //   const prodId = req.params.productId

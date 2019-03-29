@@ -17,7 +17,7 @@ app.use((req, res, next) => {
   // Used to save the current user in req
   User.findById("5c9d51e809fe2206b492a2d4")
     .then(user => {
-      req.user = user
+      req.user = new User(user.name, user.email, user.cart, user._id)
       next()
     })
     .catch(err => {
