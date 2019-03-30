@@ -23,8 +23,6 @@ router.post(
 
 router.post("/create-order", shopController.postOrder)
 
-// router.get("/orders/:id", shopController.getOrder)
-
-// router.get("/orders", shopController.getOrders)
+router.get("/orders", shopController.getOrders)
 
 module.exports = router

@@ -77,37 +77,12 @@ exports.postOrder = (req, res, next) => {
     .catch(err => console.log(err))
 }
 
-// exports.getOrder = (req, res, next) => {
-//   orderDB
-//     .getProducts(req.params.id)
-//     .then(products => {
-//       if (products.length > 0) {
-//         res.render("shop/order", {
-//           path: `/order/${req.params.id}`,
-//           pageTitle: "Your Order",
-//           products: products,
-//           total: products[0].Total
-//         })
-//       } else res.redirect("/orders")
-//     })
-//     .catch(err => console.log(err))
-// }
-
-// exports.getOrders = (req, res, next) => {
-//   orderDB.getOrders(req.user.id).then(result => {
-//     orderDB.getOrderIds(req.user.id).then(ids => {
-//       const orders = []
-//       ids.forEach(orderId => {
-//         const order = { orderId: orderId.id, products: [] }
-//         const products = result.filter(res => res.orderId === orderId.id)
-//         order.products = products
-//         orders.push(order)
-//       })
-//       res.render("shop/orders", {
-//         path: "/orders",
-//         pageTitle: "Your Orders",
-//         orders: orders
-//       })
-//     })
-//   })
-// }
+exports.getOrders = (req, res, next) => {
+  req.user.getOrders().then(orders => {
+    res.render("shop/orders", {
+      path: "/orders",
+      pageTitle: "Your Orders",
+      orders: orders
+    })
+  })
+}
