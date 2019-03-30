@@ -64,6 +64,8 @@ exports.postEditProduct = (req, res, next) => {
 
 exports.getProducts = (req, res, next) => {
   Product.find()
+    // can add: .select('title price -_id) can select just title and price, remove id
+    //.populate('userId', 'name') this add name (remove name for all the information) about the user to the response - no just id
     .then(products => {
       res.render("admin/products", {
         prods: products,
