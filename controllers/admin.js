@@ -14,7 +14,8 @@ exports.postAddProduct = (req, res, next) => {
     title: title,
     price: price,
     description: description,
-    imageUrl: imageUrl
+    imageUrl: imageUrl,
+    userId: req.user //mongoose will only store user._id
   })
   product
     .save()
