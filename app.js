@@ -12,6 +12,10 @@ const app = express()
 app.set("view engine", "ejs")
 app.set("views", "views")
 
+const adminRoutes = require("./routes/admin")
+const shopRoutes = require("./routes/shop")
+const authRoutes = require("./routes/auth")
+
 // Middleware to create a user and its corresponding cart
 app.use((req, res, next) => {
   // Used to save the current user in req
@@ -25,14 +29,12 @@ app.use((req, res, next) => {
     })
 })
 
-const adminRoutes = require("./routes/admin")
-const shopRoutes = require("./routes/shop")
-
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, "public")))
 
 app.use("/admin", adminRoutes)
 app.use(shopRoutes)
+app.use(authRoutes)
 
 app.use(errorController.get404)
 
