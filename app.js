@@ -4,11 +4,19 @@ const express = require("express")
 const bodyParser = require("body-parser")
 const mongoose = require("mongoose")
 const session = require("express-session")
+const MongoDbStore = require("connect-mongodb-session")(session)
 
 const errorController = require("./controllers/error")
 const User = require("./models/user")
 
+const MONGODB_URI =
+  "mongodb+srv://Leila:DgZ2MAckNWKZG3M@cluster0-tfqvb.mongodb.net/shop?retryWrites=true"
+
 const app = express()
+const store = new MongoDbStore({
+  uri: MONGODB_URI,
+  collection: "sessions"
+})
 
 app.set("view engine", "ejs")
 app.set("views", "views")
@@ -38,7 +46,9 @@ app.use(
     secret: "This is a secret",
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false, httpOnly: false }
+    cookie: { secure: false, httpOnly: false },
+
+    store: store
   })
 )
 
@@ -49,9 +59,7 @@ app.use(authRoutes)
 app.use(errorController.get404)
 
 mongoose
-  .connect(
-    "mongodb+srv://Leila:DgZ2MAckNWKZG3M@cluster0-tfqvb.mongodb.net/shop?retryWrites=true"
-  )
+  .connect(MONGODB_URI)
   .then(result => {
     User.findOne().then(user => {
       if (!user) {
