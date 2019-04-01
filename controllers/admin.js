@@ -5,7 +5,7 @@ exports.getAddProduct = (req, res, next) => {
     pageTitle: "Add Product",
     path: "/admin/add-product",
     editing: false,
-    isAuthenticated: req.isLoggedIn
+    isAuthenticated: req.session.isLoggedIn
   })
 }
 
@@ -16,7 +16,7 @@ exports.postAddProduct = (req, res, next) => {
     price: price,
     description: description,
     imageUrl: imageUrl,
-    userId: req.user //mongoose will only store user._id
+    userId: req.session.user //mongoose will only store user._id
   })
   product
     .save()
@@ -40,7 +40,7 @@ exports.getEditProduct = (req, res, next) => {
         path: "/admin/edit-product",
         editing: editMode,
         product: product,
-        isAuthenticated: req.isLoggedIn
+        isAuthenticated: req.session.isLoggedIn
       })
     })
     .catch(err => console.log(err))
@@ -73,7 +73,7 @@ exports.getProducts = (req, res, next) => {
         prods: products,
         pageTitle: "Admin Products",
         path: "/admin/products",
-        isAuthenticated: req.isLoggedIn
+        isAuthenticated: req.session.isLoggedIn
       })
     })
     .catch(err => console.log(err))
@@ -82,7 +82,7 @@ exports.getProducts = (req, res, next) => {
 exports.postDeleteProduct = (req, res, next) => {
   const prodId = req.params.productId
   Product.findByIdAndRemove(prodId)
-    .then(response => {
+    .then(() => {
       res.redirect("/admin/products")
     })
     .catch(err => console.log(err))

@@ -25,19 +25,6 @@ const adminRoutes = require("./routes/admin")
 const shopRoutes = require("./routes/shop")
 const authRoutes = require("./routes/auth")
 
-// Middleware to create a user and its corresponding cart
-app.use((req, res, next) => {
-  // Used to save the current user in req
-  User.findById("5c9fe9f430e68927d8fc94e8")
-    .then(user => {
-      req.user = user
-      next()
-    })
-    .catch(err => {
-      console.log(err)
-    })
-})
-
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, "public")))
 app.use(
