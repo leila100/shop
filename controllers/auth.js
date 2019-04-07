@@ -1,3 +1,5 @@
+const crypto = require("crypto")
+
 const bcrypt = require("bcryptjs")
 const nodemailer = require("nodemailer")
 const sendgridTransport = require("nodemailer-sendgrid-transport")
@@ -7,8 +9,7 @@ const User = require("../models/user")
 const transporter = nodemailer.createTransport(
   sendgridTransport({
     auth: {
-      api_key:
-        "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"
+      api_key: process.env.MAIL_API_KEY
     }
   })
 )
@@ -120,5 +121,48 @@ exports.getReset = (req, res, next) => {
     path: "/reset",
     pageTitle: "Reset Password",
     errorMessage: message
+  })
+}
+
+exports.postReset = (req, res, next) => {
+  crypto.randomBytes(32, (err, buffer) => {
+    if (err) {
+      console.log(err)
+      res.redirect("/reset")
+    }
+    const token = buffer.toString("hex")
+    User.findOne({ email: req.body.email })
+      .then(user => {
+        if (!user) {
+          req.flash("error", "No account with that email was found!")
+          res.redirect("/reset")
+        }
+        user.resetToken = token
+        user.resetTokenExpiration = Date.now() + 3600000 // Now plus 1 hour
+        return user.save()
+      })
+      .then(() => {
+        console.log("Sending email to: ", req.body.email, "token: ", token)
+        res.redirect("/")
+        // transporter.sendMail({
+        //   to: "nb_leila@yahoo.com",
+        //   from: "shop@shopApp.com",
+        //   subject: "Password Reset",
+        //   html: `
+        //     <p>You requested a password reset.</p>
+        //     <p>Click this <a href="http://localhost:3000/reset/${token}">link</a> to set a new password.</p>
+        //     <p>This link will be available for an hour.</p>
+        //   `
+        // })
+        transporter.sendMail({
+          to: req.body.email,
+          from: "shop@shop.com",
+          subject: "Signup Successful",
+          html: "<h1>You have successfully signed up!</h1>"
+        })
+      })
+      .catch(err => {
+        console.log(err)
+      })
   })
 }
