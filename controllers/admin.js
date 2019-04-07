@@ -50,20 +50,22 @@ exports.postEditProduct = (req, res, next) => {
 
   Product.findById(prodId)
     .then(product => {
+      if (product.userId.toString() !== req.user._id.toString()) {
+        return res.redirect("/") //User doesn't have the right to edit product
+      }
       product.title = title
       product.imageUrl = imageUrl
       product.price = price
       product.description = description
-      return product.save()
-    })
-    .then(response => {
-      res.redirect("/admin/products")
+      return product.save().then(response => {
+        res.redirect("/admin/products")
+      })
     })
     .catch(err => console.log(err))
 }
 
 exports.getProducts = (req, res, next) => {
-  Product.find()
+  Product.find({ userId: req.user._id })
     // can add: .select('title price -_id) can select just title and price, remove id
     //.populate('userId', 'name') this add name (remove name for all the information) about the user to the response - no just id
     .then(products => {
@@ -78,7 +80,7 @@ exports.getProducts = (req, res, next) => {
 
 exports.postDeleteProduct = (req, res, next) => {
   const prodId = req.params.productId
-  Product.findByIdAndRemove(prodId)
+  Product.deleteOne({ _id: prodId, userId: req.user._id })
     .then(() => {
       res.redirect("/admin/products")
     })
