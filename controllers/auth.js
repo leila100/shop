@@ -1,18 +1,24 @@
 const crypto = require("crypto")
 
-const bcrypt = require("bcryptjs")
-const nodemailer = require("nodemailer")
-const sendgridTransport = require("nodemailer-sendgrid-transport")
-
 const User = require("../models/user")
 
+const bcrypt = require("bcryptjs")
+const nodemailer = require("nodemailer")
+// const sendgridTransport = require("nodemailer-sendgrid-transport")
+const nodemailerSendgrid = require("nodemailer-sendgrid")
 const transporter = nodemailer.createTransport(
-  sendgridTransport({
-    auth: {
-      api_key: process.env.MAIL_API_KEY
-    }
+  nodemailerSendgrid({
+    apiKey: process.env.MAIL_API_KEY
   })
 )
+
+// const transporter = nodemailer.createTransport(
+//   sendgridTransport({
+//     auth: {
+//       api_key: process.env.MAIL_API_KEY
+//     }
+//   })
+// )
 
 exports.getLogin = (req, res, next) => {
   let message = req.flash("error")
@@ -144,25 +150,37 @@ exports.postReset = (req, res, next) => {
       .then(() => {
         console.log("Sending email to: ", req.body.email, "token: ", token)
         res.redirect("/")
-        // transporter.sendMail({
-        //   to: "nb_leila@yahoo.com",
-        //   from: "shop@shopApp.com",
-        //   subject: "Password Reset",
-        //   html: `
-        //     <p>You requested a password reset.</p>
-        //     <p>Click this <a href="http://localhost:3000/reset/${token}">link</a> to set a new password.</p>
-        //     <p>This link will be available for an hour.</p>
-        //   `
-        // })
         transporter.sendMail({
           to: req.body.email,
-          from: "shop@shop.com",
-          subject: "Signup Successful",
-          html: "<h1>You have successfully signed up!</h1>"
+          from: "shop@shopApp.com",
+          subject: "Password Reset",
+          html: `
+          <h2>You requested a password reset.</h2>
+          <p>Click this <a href='http://localhost:3000/reset/${token}'>link</a> to set a new password.</p>
+          `
         })
       })
       .catch(err => {
         console.log(err)
       })
   })
+}
+
+exports.getNewPassword = (req, res, next) => {
+  const token = req.params.token
+  User.findOne({ resetToken: token, resetTokenExpiration: { $gt: Date.now() } })
+    .then(user => {
+      let message = req.flash("error")
+      if (message.length > 0) message = message[0]
+      else message = null
+      res.render("auth/new-password", {
+        path: "/new-password",
+        pageTitle: "New Password",
+        errorMessage: message,
+        userId: user._id.toString()
+      })
+    })
+    .catch(err => {
+      console.log(err)
+    })
 }
