@@ -85,7 +85,7 @@ exports.getSignup = (req, res, next) => {
 }
 
 exports.postSignup = (req, res, next) => {
-  const { email, password, confirmPassword } = req.body
+  const { email, password } = req.body
   const errors = validationResult(req)
 
   if (!errors.isEmpty()) {
@@ -96,34 +96,24 @@ exports.postSignup = (req, res, next) => {
     })
   }
 
-  User.findOne({ email: email })
-    .then(userData => {
-      if (userData) {
-        req.flash("error", "Email exists already, please pick a different one.")
-        return res.redirect("/signup")
-      }
-      return bcrypt
-        .hash(password, 12)
-        .then(hashedPassword => {
-          const user = new User({
-            email: email,
-            password: hashedPassword,
-            cart: { items: [] }
-          })
-          return user.save()
-        })
-        .then(() => {
-          res.redirect("/login")
-          transporter.sendMail({
-            to: email,
-            from: "shop@shop.com",
-            subject: "Signup Successful",
-            html: "<h1>You have successfully signed up!</h1>"
-          })
-        })
-        .catch(err => {
-          console.log(err)
-        })
+  bcrypt
+    .hash(password, 12)
+    .then(hashedPassword => {
+      const user = new User({
+        email: email,
+        password: hashedPassword,
+        cart: { items: [] }
+      })
+      return user.save()
+    })
+    .then(() => {
+      res.redirect("/login")
+      transporter.sendMail({
+        to: email,
+        from: "shop@shop.com",
+        subject: "Signup Successful",
+        html: "<h1>You have successfully signed up!</h1>"
+      })
     })
     .catch(err => {
       console.log(err)

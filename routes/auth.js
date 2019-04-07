@@ -4,6 +4,8 @@ const authController = require("../controllers/auth")
 
 const router = express.Router()
 
+const User = require("../models/user")
+
 router.get("/login", authController.getLogin)
 
 router.post("/login", authController.postLogin)
@@ -19,9 +21,16 @@ router.post(
       .isEmail()
       .withMessage("Please enter a valid email.")
       .custom((value, { req }) => {
-        if (value === "test@test.com") {
-          throw new Error("This email address is not a valid email address.")
-        } else return true
+        // if (value === "test@test.com") {
+        //   throw new Error("This email address is not a valid email address.")
+        // } else return true
+        return User.findOne({ email: value }).then(userData => {
+          if (userData) {
+            return Promise.reject(
+              "Email exists already, please pick a different one."
+            )
+          }
+        })
       }),
     body(
       "password",
