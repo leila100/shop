@@ -60,7 +60,8 @@ exports.getEditProduct = (req, res, next) => {
         editing: editMode,
         product: product,
         hasError: false,
-        errorMessage: null
+        errorMessage: null,
+        validationErrors: []
       })
     })
     .catch(err => console.log(err))
@@ -69,6 +70,19 @@ exports.getEditProduct = (req, res, next) => {
 exports.postEditProduct = (req, res, next) => {
   const prodId = req.params.productId
   const { title, imageUrl, price, description } = req.body
+  const errors = validationResult(req)
+
+  if (!errors.isEmpty()) {
+    return res.status(422).render("admin/edit-product", {
+      pageTitle: "Edit Product",
+      path: "/admin/edit-product",
+      editing: true,
+      errorMessage: errors.array()[0].msg,
+      product: { title, imageUrl, price, description, _id: prodId },
+      hasError: true,
+      validationErrors: errors.array()
+    })
+  }
 
   Product.findById(prodId)
     .then(product => {
