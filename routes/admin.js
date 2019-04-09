@@ -24,9 +24,6 @@ router.post(
       .isString()
       .isLength({ min: 3 })
       .trim(),
-    body("imageUrl", "Please enter a valid URL")
-      .isURL()
-      .trim(),
     body("price", "Please enter price in the format x.xx").isFloat(),
     body(
       "description",
@@ -50,9 +47,6 @@ router.post(
       .withMessage(
         "Please enter an alphanumeric title of at least 3 characters long."
       ),
-    body("imageUrl", "Please enter a valid URL")
-      .isURL()
-      .trim(),
     body("price", "Please enter price in the format x.xx").isFloat(),
     body(
       "description",

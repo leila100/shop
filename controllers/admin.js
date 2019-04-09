@@ -14,7 +14,8 @@ exports.getAddProduct = (req, res, next) => {
 }
 
 exports.postAddProduct = (req, res, next) => {
-  const { title, imageUrl, price, description } = req.body
+  const { title, price, description } = req.body
+  const image = req.file
   const errors = validationResult(req)
 
   if (!errors.isEmpty()) {
@@ -24,7 +25,7 @@ exports.postAddProduct = (req, res, next) => {
       path: "/admin/add-product",
       editing: false,
       errorMessage: errors.array()[0].msg,
-      product: { title, imageUrl, price, description },
+      product: { title, image, price, description },
       hasError: true,
       validationErrors: errors.array()
     })
