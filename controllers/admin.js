@@ -16,7 +16,6 @@ exports.getAddProduct = (req, res, next) => {
 exports.postAddProduct = (req, res, next) => {
   const { title, price, description } = req.body
   const image = req.file
-  console.log(image)
   if (!image) {
     return res.status(422).render("admin/edit-product", {
       pageTitle: "Add Product",
@@ -32,7 +31,6 @@ exports.postAddProduct = (req, res, next) => {
   const errors = validationResult(req)
 
   if (!errors.isEmpty()) {
-    console.log(errors.array())
     return res.status(422).render("admin/edit-product", {
       pageTitle: "Add Product",
       path: "/admin/add-product",
