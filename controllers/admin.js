@@ -16,6 +16,19 @@ exports.getAddProduct = (req, res, next) => {
 exports.postAddProduct = (req, res, next) => {
   const { title, price, description } = req.body
   const image = req.file
+  console.log(image)
+  if (!image) {
+    return res.status(422).render("admin/edit-product", {
+      pageTitle: "Add Product",
+      path: "/admin/add-product",
+      editing: false,
+      errorMessage: "Attached file is not an image.",
+      product: { title, price, description },
+      hasError: true,
+      validationErrors: []
+    })
+  }
+
   const errors = validationResult(req)
 
   if (!errors.isEmpty()) {
@@ -25,11 +38,13 @@ exports.postAddProduct = (req, res, next) => {
       path: "/admin/add-product",
       editing: false,
       errorMessage: errors.array()[0].msg,
-      product: { title, image, price, description },
+      product: { title, price, description },
       hasError: true,
       validationErrors: errors.array()
     })
   }
+
+  const imageUrl = image.path
 
   const product = new Product({
     title: title,
@@ -77,8 +92,10 @@ exports.getEditProduct = (req, res, next) => {
 }
 
 exports.postEditProduct = (req, res, next) => {
+  console.log("in post edit product")
   const prodId = req.params.productId
-  const { title, imageUrl, price, description } = req.body
+  const { title, price, description } = req.body
+  const image = req.file
   const errors = validationResult(req)
 
   if (!errors.isEmpty()) {
@@ -87,7 +104,7 @@ exports.postEditProduct = (req, res, next) => {
       path: "/admin/edit-product",
       editing: true,
       errorMessage: errors.array()[0].msg,
-      product: { title, imageUrl, price, description, _id: prodId },
+      product: { title, price, description, _id: prodId },
       hasError: true,
       validationErrors: errors.array()
     })
@@ -99,7 +116,7 @@ exports.postEditProduct = (req, res, next) => {
         return res.redirect("/") //User doesn't have the right to edit product
       }
       product.title = title
-      product.imageUrl = imageUrl
+      if (image) product.imageUrl = image.path
       product.price = price
       product.description = description
       return product.save().then(response => {
