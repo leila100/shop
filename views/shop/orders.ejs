@@ -12,22 +12,21 @@
               <ul  class="orders">
                 <% orders.forEach(order => { %>
                   <li class="orders__item">
-                    <h1><%= order.user.name %> - Order Id: <%= order._id %> </h1>
+                    <h1><%= order.user.name %> - Order Id: <%= order._id %> - <a href="/orders/<%= order._id %>">Invoice</a> </h1>
                     <ul class="orders__products">
-                        <% order.products.forEach(p => { %>
-                            <li class="orders__products-item">
-                              <ul>
-                                <li>Product: <%= p.product.title %> (<%= p.quantity %>)</li>
-                                <li>Description: <%= p.product.description %></li>
-                                <li>Price: <%= p.product.price %></li>
-                                <li><a href="/orders/<%= order._id %>">Invoice</a></li>
-                              </ul>
-                            </li>
-                        <% }) %>
+                      <% order.products.forEach(p => { %>
+                          <li class="orders__products-item">
+                            <ul>
+                              <li>Product: <%= p.product.title %> (<%= p.quantity %>)</li>
+                              <li>Description: <%= p.product.description %></li>
+                              <li>Price: <%= p.product.price %></li>
+                            </ul>
+                          </li>
+                      <% }) %>
                     </ul>
                   </li>
                 <% }) %>
-                </ul>
+              </ul>
             <% } %>
           </main>
         <%- include('../includes/end.ejs') %>
