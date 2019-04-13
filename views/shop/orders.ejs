@@ -20,6 +20,7 @@
                                 <li>Product: <%= p.product.title %> (<%= p.quantity %>)</li>
                                 <li>Description: <%= p.product.description %></li>
                                 <li>Price: <%= p.product.price %></li>
+                                <li><a href="/orders/<%= order._id %>">Invoice</a></li>
                               </ul>
                             </li>
                         <% }) %>
