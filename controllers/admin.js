@@ -91,7 +91,6 @@ exports.getEditProduct = (req, res, next) => {
 }
 
 exports.postEditProduct = (req, res, next) => {
-  console.log("in post edit product")
   const prodId = req.params.productId
   const { title, price, description } = req.body
   const image = req.file
