@@ -1,40 +1,34 @@
-const express = require("express")
-const { body } = require("express-validator/check")
+const express = require("express");
+const { body } = require("express-validator/check");
 
-const adminController = require("../controllers/admin")
-const isAuth = require("../middleware/is-auth")
+const adminController = require("../controllers/admin");
+const isAuth = require("../middleware/is-auth");
 
-const router = express.Router()
+const router = express.Router();
 
 // /admin/add-product => GET
-router.get("/add-product", isAuth, adminController.getAddProduct)
+router.get("/add-product", isAuth, adminController.getAddProduct);
 
 // // /admin/products => GET
-router.get("/products", isAuth, adminController.getProducts)
+router.get("/products", isAuth, adminController.getProducts);
 
-router.get("/edit-product/:productId", isAuth, adminController.getEditProduct)
+router.get("/edit-product/:productId", isAuth, adminController.getEditProduct);
 
 router.post(
   "/edit-product/:productId",
   [
-    body(
-      "title",
-      "Please enter an alphanumeric title of at least 3 characters long."
-    )
+    body("title", "Please enter an alphanumeric title of at least 3 characters long.")
       .isString()
       .isLength({ min: 3 })
       .trim(),
     body("price", "Please enter price in the format x.xx").isFloat(),
-    body(
-      "description",
-      "Please enter a description of at least 5 characters and no more than 400"
-    )
+    body("description", "Please enter a description of at least 5 characters and no more than 400")
       .isLength({ min: 5, max: 400 })
       .trim()
   ],
   isAuth,
   adminController.postEditProduct
-)
+);
 
 // // /admin/add-product => POST
 router.post(
@@ -44,25 +38,16 @@ router.post(
       .isString()
       .isLength({ min: 3 })
       .trim()
-      .withMessage(
-        "Please enter an alphanumeric title of at least 3 characters long."
-      ),
+      .withMessage("Please enter an alphanumeric title of at least 3 characters long."),
     body("price", "Please enter price in the format x.xx").isFloat(),
-    body(
-      "description",
-      "Please enter a description of at least 5 characters and no more than 400"
-    )
+    body("description", "Please enter a description of at least 5 characters and no more than 400")
       .isLength({ min: 5, max: 400 })
       .trim()
   ],
   isAuth,
   adminController.postAddProduct
-)
+);
 
-router.post(
-  "/delete-product/:productId",
-  isAuth,
-  adminController.postDeleteProduct
-)
+router.delete("/product/:productId", isAuth, adminController.deleteProduct);
 
-module.exports = router
+module.exports = router;
